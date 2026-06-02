@@ -1,42 +1,82 @@
-# Bus-Charging-Scheduler<h1 align="center">🏗️ System Architecture</h1>
+<h1 align="center">🚌 Bus Charging Scheduler</h1>
+
+<p align="center">
+Simulation-based EV bus charging scheduler for intercity electric buses.
+</p>
 
 ---
 
-<h2>📌 High-Level Architecture</h2>
+<h2>📌 Overview</h2>
 
-<pre>
-Scenario JSON
-      ↓
-Scheduler
-      ↓
-Plan Generation
-      ↓
-Simulation Engine
-      ↓
-Shared Station Manager
-      ↓
-Scoring Engine
-      ↓
-Final Bus Timelines + Station Schedules
-      ↓
-Streamlit UI
-</pre>
-
----
-
-<h2>🎯 Architecture Goals</h2>
+<p>
+This project simulates electric bus charging schedules between Bengaluru and Kochi.
+The system handles:
+</p>
 
 <ul>
-  <li>Simulate realistic EV charging behavior</li>
-  <li>Handle charger contention</li>
-  <li>Support multiple buses simultaneously</li>
-  <li>Keep components modular and extensible</li>
-  <li>Separate scheduling, simulation, and UI logic</li>
+  <li>Battery range constraints</li>
+  <li>Charging station contention</li>
+  <li>Charging wait times</li>
+  <li>Multiple buses sharing chargers</li>
+  <li>Forward and reverse traffic</li>
+  <li>Dynamic charging timelines</li>
 </ul>
 
 ---
 
-<h2>🧩 Core Components</h2>
+<h2>🚀 Features</h2>
+
+<ul>
+  <li>Multi-bus EV scheduling simulation</li>
+  <li>Shared charger resource management</li>
+  <li>Queue and wait-time simulation</li>
+  <li>Forward and reverse route support</li>
+  <li>Per-bus charging timelines</li>
+  <li>Per-station charging schedules</li>
+  <li>Multiple configurable scenarios</li>
+  <li>Interactive Streamlit UI</li>
+</ul>
+
+---
+
+<h2>🛠️ Tech Stack</h2>
+
+<ul>
+  <li>Python</li>
+  <li>Streamlit</li>
+  <li>Pandas</li>
+</ul>
+
+---
+
+<h2>📂 Project Structure</h2>
+
+<pre>
+bus-charging-scheduler/
+│
+├── app.py
+├── test.py
+├── requirements.txt
+│
+├── scenarios/
+│   ├── scenario_1.json
+│   ├── scenario_2.json
+│   ├── scenario_3.json
+│   ├── scenario_4.json
+│   └── scenario_5.json
+│
+└── engine/
+    ├── __init__.py
+    ├── scheduler.py
+    ├── simulator.py
+    ├── scorer.py
+    ├── station_manager.py
+    └── utils.py
+</pre>
+
+---
+
+<h2>⚙️ Core Components</h2>
 
 <table>
   <tr>
@@ -46,7 +86,7 @@ Streamlit UI
 
   <tr>
     <td>scheduler.py</td>
-    <td>Charging plan selection</td>
+    <td>Charging plan generation and selection</td>
   </tr>
 
   <tr>
@@ -56,220 +96,151 @@ Streamlit UI
 
   <tr>
     <td>station_manager.py</td>
-    <td>Shared charger state tracking</td>
+    <td>Shared charger state management</td>
   </tr>
 
   <tr>
     <td>scorer.py</td>
-    <td>Plan scoring logic</td>
+    <td>Schedule scoring and evaluation</td>
   </tr>
 
   <tr>
     <td>app.py</td>
-    <td>Visualization/UI layer</td>
+    <td>Streamlit frontend UI</td>
   </tr>
 </table>
 
 ---
 
-<h2>🔄 Scheduling Flow</h2>
+<h2>🧠 Scheduling Strategy</h2>
+
+<p>
+The scheduler uses a sequential greedy optimization strategy.
+</p>
 
 <ol>
-  <li>Load scenario JSON</li>
   <li>Generate valid charging plans</li>
-  <li>Clone station state</li>
-  <li>Simulate candidate plans</li>
-  <li>Compute scores</li>
-  <li>Select best plan</li>
+  <li>Simulate each candidate plan</li>
+  <li>Evaluate wait times and delays</li>
+  <li>Select lowest-cost plan</li>
   <li>Commit charger reservations</li>
 </ol>
 
----
-
-<h2>🚏 Shared Resource Scheduling</h2>
-
 <p>
-Charging stations are treated as shared resources.
-</p>
-
-<p>
-A global <code>StationManager</code> maintains:
-</p>
-
-<ul>
-  <li>Charger occupancy</li>
-  <li>Station schedules</li>
-  <li>Next available charging time</li>
-</ul>
-
-<p>
-This creates realistic charger contention between buses.
+This creates realistic charger contention across the network.
 </p>
 
 ---
 
-<h2>🕒 Time Model</h2>
+<h2>⏱️ Time Representation</h2>
 
 <p>
-The simulation internally uses:
+The simulation internally represents time as:
 </p>
 
 <pre>
-integer minutes
+minutes since midnight
 </pre>
 
 <p>
-Example:
+This avoids:
 </p>
+
+<ul>
+  <li>datetime rollover bugs</li>
+  <li>timezone complexity</li>
+  <li>overnight simulation issues</li>
+</ul>
+
+---
+
+<h2>🧪 Scenarios</h2>
+
+<table>
+  <tr>
+    <th>Scenario</th>
+    <th>Description</th>
+  </tr>
+
+  <tr>
+    <td>Scenario 1</td>
+    <td>Even spacing between departures</td>
+  </tr>
+
+  <tr>
+    <td>Scenario 2</td>
+    <td>Dense departures causing higher contention</td>
+  </tr>
+
+  <tr>
+    <td>Scenario 3</td>
+    <td>Direction imbalance between routes</td>
+  </tr>
+
+  <tr>
+    <td>Scenario 4</td>
+    <td>Operator-priority scheduling</td>
+  </tr>
+
+  <tr>
+    <td>Scenario 5</td>
+    <td>Peak congestion stress test</td>
+  </tr>
+</table>
+
+---
+
+<h2>▶️ Running the Project</h2>
+
+<h3>Install dependencies</h3>
 
 <pre>
-19:00 → 1140
+pip install -r requirements.txt
 </pre>
 
-<p>
-Advantages:
-</p>
-
-<ul>
-  <li>Simpler arithmetic</li>
-  <li>No timezone complexity</li>
-  <li>No datetime rollover bugs</li>
-  <li>Reliable overnight simulation</li>
-</ul>
-
----
-
-<h2>⚡ Simulation Flow</h2>
+<h3>Run backend simulation</h3>
 
 <pre>
-Travel
-→ Arrive at station
-→ Check charger availability
-→ Wait if occupied
-→ Charge
-→ Continue journey
+python test.py
 </pre>
 
----
-
-<h2>📈 Scoring Model</h2>
-
-<p>
-Plans are evaluated using:
-</p>
+<h3>Run Streamlit app</h3>
 
 <pre>
-score =
-    wait_penalty
-    +
-    stop_penalty
+streamlit run app.py
 </pre>
 
-<p>
-Where:
-</p>
-
-<ul>
-  <li><b>wait_penalty</b> = charger waiting time</li>
-  <li><b>stop_penalty</b> = number of charging stops</li>
-</ul>
-
-<p>
-Lower scores are preferred.
-</p>
-
 ---
 
-<h2>🧪 Simulation Strategy</h2>
+<h2>📊 Outputs</h2>
 
-<p>
-The system uses:
-</p>
-
-<pre>
-Greedy Sequential Optimization
-</pre>
-
-<p>
-Buses are processed in departure order.
-Earlier buses reserve chargers first, influencing later buses.
-</p>
-
----
-
-<h2>📺 Streamlit UI</h2>
-
-<p>
-The frontend is intentionally lightweight.
-</p>
-
-<p>
-Streamlit is used for:
-</p>
+<p>The application displays:</p>
 
 <ul>
-  <li>Scenario selection</li>
-  <li>Displaying bus schedules</li>
-  <li>Showing station charging timelines</li>
-</ul>
-
-<p>
-All scheduling logic remains inside the backend engine.
-</p>
-
----
-
-<h2>📦 Scalability</h2>
-
-<p>
-The architecture can be extended to support:
-</p>
-
-<ul>
-  <li>Additional routes</li>
-  <li>Larger fleets</li>
-  <li>Dynamic charger counts</li>
-  <li>Battery SOC tracking</li>
-  <li>Advanced optimization algorithms</li>
-  <li>Real-time telemetry</li>
+  <li>Per-bus charging plans</li>
+  <li>Charging timelines</li>
+  <li>Wait times</li>
+  <li>Final arrival times</li>
+  <li>Per-station charging schedules</li>
 </ul>
 
 ---
 
-<h2>⚖️ Tradeoffs</h2>
-
-<p>
-The current implementation prioritizes:
-</p>
+<h2>🔮 Future Improvements</h2>
 
 <ul>
-  <li>Simplicity</li>
-  <li>Explainability</li>
-  <li>Modularity</li>
-  <li>Maintainability</li>
+  <li>Smarter global optimization</li>
+  <li>Dynamic charger capacities</li>
+  <li>Battery SOC simulation</li>
+  <li>Real-time traffic integration</li>
+  <li>OR-tools / Genetic algorithms</li>
+  <li>Multi-route support</li>
 </ul>
-
-<p>
-Instead of attempting expensive global optimization.
-</p>
 
 ---
 
-<h2>✅ Conclusion</h2>
+<h2>👨‍💻 Author </h2>
 
 <p>
-The system successfully models:
-</p>
-
-<ul>
-  <li>EV charging constraints</li>
-  <li>Shared charger contention</li>
-  <li>Scheduling conflicts</li>
-  <li>Queue buildup</li>
-  <li>Wait propagation</li>
-  <li>Multi-bus coordination</li>
-</ul>
-
-<p>
-while maintaining a clean and extensible architecture.
+<b> Divyanshee Verma</b>
 </p>
